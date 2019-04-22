@@ -1,0 +1,9 @@
+[package]
+name = "console_rpg"
+version = "0.1.0"
+authors = ["aaron"]
+edition = "2018"
+
+[dependencies]
+ncurses = "5.99.0"
+textwrap = "0.11"
