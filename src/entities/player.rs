@@ -10,9 +10,9 @@ use crate::game_window::*;
 pub struct Player
 {
     //name: String,
-    level: u32,
-    max_health: i32,
-    curr_health: i32,
+    level: u16,
+    max_health: i16,
+    curr_health: i16,
     alive: bool,
     curr_location: u32
 }
@@ -24,7 +24,7 @@ impl Player
         Player {
             //name: String::from(name),
             // default levels?
-            level: 1,
+            level: 10,
             max_health: 10,
             curr_health: 10,
             alive: true,
@@ -32,7 +32,7 @@ impl Player
         }
     }
 
-    pub fn take_damage(&mut self, amount: i32) -> bool
+    pub fn take_damage(&mut self, amount: i16) -> bool
     {
         // function will return false upon death
         self.curr_health -= amount;
@@ -45,14 +45,20 @@ impl Player
 
     pub fn look_at_room(&mut self, win: &mut MainWindow)
     {
-        wprintw(win.get_win(), "\n");
+        wprintw(win.get_win(), "\n\n");
         let message = "Finally, you're awake. Do you know where you are?";
         wprintw(win.get_win(), &fill(message, win.get_max_x() as usize));
     }
 
-    pub fn heal(&mut self, amount: i32) { self.curr_health += amount; }
+    pub fn heal(&mut self, amount: i16) { self.curr_health += amount; }
 
     pub fn is_alive(&self) -> bool { self.alive }
 
-    pub fn get_chealth(&self) -> i32 { self.curr_health }
+    pub fn get_chealth(&self) -> i16 { self.curr_health }
+
+    pub fn get_mhealth(&self) -> i16 { self.max_health }
+
+    pub fn get_location(&self) -> u32 { self.curr_location }
+
+    pub fn get_level(&self) -> u16 { self.level }
 }

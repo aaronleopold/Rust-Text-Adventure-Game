@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::boxed::Box;
 
+use std::process;
+
 pub struct Room
 {
     name: String,
@@ -34,6 +36,8 @@ impl Room
             west_room: id + 4
         }
     }
+
+    pub fn get_name(&self) -> String { self.name.clone() }
 }
 
 impl RoomGraph
@@ -47,6 +51,17 @@ impl RoomGraph
 
         graph.fill();
         graph
+    }
+
+    pub fn get_room(&self, id: u32) -> &Room
+    {
+        let ret = self.graph.get(&id);
+        if ret.is_some() {
+            ret.unwrap()
+        }
+        else {
+            process::exit(1);
+        }
     }
 
 /*

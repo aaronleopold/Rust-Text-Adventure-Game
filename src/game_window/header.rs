@@ -1,3 +1,5 @@
+use crate::game_window::*;
+
 extern crate ncurses;
 extern crate textwrap;
 
@@ -8,7 +10,7 @@ pub struct Header
 {
     game_title: String,
     curr_room: String,
-    player_level: i16,
+    player_level: u16,
     player_chealth: i16,
     player_mhealth: i16,
     bar: WINDOW,
@@ -36,8 +38,26 @@ impl Header
         }
     }
 
-    pub fn update()
+    pub fn update(
+        &mut self, new_room: String, new_level: u16, c_health: i16, 
+        m_health: i16)
     {
+        self.curr_room = new_room.clone();
+        self.player_level = new_level;
+        self.player_chealth = c_health;
+        self.player_mhealth = m_health;
 
+        let title = format! (" {} | {} ", self.game_title, self.curr_room);
+        let whole_bar = format! (
+            "{:1$} Health: {2:}/{3:} | Level: {4:}", title, (self.bar_max_x as usize - 
+            (title.len())), self.player_chealth, self.player_mhealth,
+            self.player_level);
+
+        leaveok(self.bar, true);
+        wmove(self.bar, 0, 0);
+        wattron(self.bar, A_BOLD() | A_REVERSE());
+        wprintw(self.bar, &whole_bar);
+        wattroff(self.bar, A_BOLD() | A_REVERSE());
+        wrefresh(self.bar);
     }
 }
