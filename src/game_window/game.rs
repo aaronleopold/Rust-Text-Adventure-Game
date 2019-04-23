@@ -33,7 +33,7 @@ impl Game
         let mut playing: bool = true;
         let mut x = 0;
         let mut y = 0;
-        let mut input: String = String::new();
+        //let mut input: String = String::new();
         
         self.update_header();
         self.player.look_at_room(&mut(self.main_window));
