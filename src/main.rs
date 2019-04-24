@@ -23,9 +23,11 @@ fn init_curses()
 
 fn main() 
 {
-    init_curses();
-
+    initscr();
+    raw();
     let mut game: Game = Game::new();
+    keypad(game.get_window().get_win(), true);
+    noecho();
     game.run();
 
     endwin();
