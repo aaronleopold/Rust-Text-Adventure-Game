@@ -45,8 +45,8 @@ impl Player
 
     pub fn look_at_room(&mut self, win: &mut MainWindow)
     {
-        wprintw(win.get_win(), "\n\n");
-        let message = "Finally, you're awake. Do you know where you are?";
+        wprintw(win.get_win(), "\n");
+        let message = "Finally, you're awake. Do you know where you are?\n";
         wprintw(win.get_win(), &fill(message, win.get_max_x() as usize));
     }
 

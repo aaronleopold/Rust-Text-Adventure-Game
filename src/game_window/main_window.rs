@@ -35,7 +35,7 @@ impl MainWindow
 
     pub fn prompt(&mut self)
     {
-        wprintw(self.win, "\n\n>>");
+        wprintw(self.win, "\n>>");
         self.input_seq.clear();
     }
 
