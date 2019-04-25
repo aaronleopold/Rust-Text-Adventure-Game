@@ -228,7 +228,7 @@ impl Game
     pub fn load(&mut self) 
     {
         // open loading file
-        let filename = "../test_loading.txt";
+        let filename = "test_loading.txt";
         // load in rooms, items and npc object
         let file = File::open(filename).expect("FILE NOT FOUND!\n");
 
