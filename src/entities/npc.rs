@@ -1,10 +1,9 @@
-enum NPCType {MALE, FEMALE, OTHER}
-
 #[derive (Clone)]
 pub struct NPC
 {
     //_type: NPCType,
-    name: String
+    name: String,
+    dialogue: String
 }
 
 /*
@@ -13,12 +12,13 @@ pub struct NPC
 
 impl NPC
 {
-    pub fn new() -> Self
+    pub fn new(name: String, dialogue: String) -> Self
     {
         NPC {
             // randomize typing runtime?
             //_type: NPCType::OTHER,
-            name: String::from("temporary npc name"),
+            name: name,
+            dialogue: dialogue
         }
     }
 
@@ -27,11 +27,20 @@ impl NPC
     {
         NPC {
             //_type: npc._type,
-            name: npc.get_name()
+            name: npc.get_name(),
+            dialogue: npc.get_dialogue()
         }
     }
 
+    /*
+    pub fn reset_dialogue(&mut self)
+    {
+
+    }
+    */
+
     pub fn get_name(&self) -> String { self.name.clone() }
+    pub fn get_dialogue(&self) -> String { self.dialogue.clone() }
     //pub fn get_type(&self) -> NPCType { self._type }
 }
 

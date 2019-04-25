@@ -15,7 +15,9 @@ pub struct Room
     south_room: i32,
     west_room: i32,
     npcs: Vec<NPC>,
-    items: Vec<Item>
+    items: Vec<Item>,
+    weapons: Vec<Weapon>,
+    enemies: Vec<Enemy>
 }
 
 pub struct RoomGraph
@@ -29,8 +31,9 @@ pub struct RoomGraph
 impl Room
 {
     pub fn new(
-        name: String, room_prompt: String, id: i32,
-        north: i32, east: i32, south: i32, west: i32) -> Self
+        name: String, room_prompt: String, id: i32, north: i32, east: i32, 
+        south: i32, west: i32, npcs: Vec<NPC>, items: Vec<Item>,
+        weapons: Vec<Weapon>, enemies: Vec<Enemy>) -> Self
     {
         Room {
             name: name.clone(),
@@ -40,8 +43,10 @@ impl Room
             east_room: east,
             south_room: south,
             west_room: west,
-            npcs: Vec::new(),
-            items: Vec::new()
+            npcs: npcs,
+            items: items,
+            weapons: weapons,
+            enemies: enemies
         }
     }
 
@@ -57,7 +62,9 @@ impl Room
             south_room: room.get_south(),
             west_room: room.get_west(),
             npcs: Vec::new(),
-            items: Vec::new()
+            items: Vec::new(),
+            weapons: Vec::new(),
+            enemies: Vec::new()
         };
 
         for i in 0..(room.get_npcs().len()) {
@@ -70,11 +77,30 @@ impl Room
             new_room.items.push(new_item);
         }
 
+        for i in 0..(room.get_weapons().len()) {
+            let new_weapon: Weapon = Weapon::clone(&room.get_weapons()[i]);
+            new_room.weapons.push(new_weapon);
+        }
+
+        for i in 0..(room.get_enemies().len()) {
+
+        }
+
         new_room
     }
 
     pub fn get_name(&self) -> String { self.name.clone() }
-    pub fn get_prompt(&self) -> String { self.room_prompt.clone() }
+
+    pub fn get_prompt(&self) -> String 
+    {
+        let mut ret: String = String::new();
+        ret += "\n";
+        ret += self.room_prompt.clone().as_str();
+        ret += "\n";
+        
+        ret
+    }
+
     pub fn get_id(&self) -> i32 { self.id }
     pub fn get_north(&self) -> i32 { self.north_room }
     pub fn get_east(&self) -> i32 { self.east_room }
@@ -82,6 +108,8 @@ impl Room
     pub fn get_west(&self) -> i32 { self.west_room }
     pub fn get_npcs(&self) -> &Vec<NPC> { &self.npcs }
     pub fn get_items(&self) -> &Vec<Item> { &self.items }
+    pub fn get_weapons(&self) -> &Vec<Weapon> { &self.weapons }
+    pub fn get_enemies(&self) -> &Vec<Enemy> { &self.enemies }
 }
 
 impl RoomGraph
@@ -108,38 +136,9 @@ impl RoomGraph
         }
     }
 
-/*
-    pub fn create_room(&mut self, curr: &Room, names: &Vec<String>)
-    {
+    pub fn insert(&mut self, room: Room) { self.graph.insert(room.get_id(), room); }
 
-    }
-*/
-
-    // hard coded now until bin file type created
-    pub fn fill(&mut self, start: Room)
-    {
-        let mut first_room: Room = Room::clone(&start);
-        
-        let mut east_room: Room = Room::new(
-            String::from("Dingy corridor"),
-            String::from("\nThis corridor is really dark and gross. There's a door ahead though.\n"),
-            1002, -1, -1, -1, 1000);
-        let mut north_room: Room = Room::new(
-            String::from("north room"), 
-            String::from(""),
-            -1, -1, -1, -1, -1);
-        let mut south_room: Room = Room::new(
-            String::from("south room"), 
-            String::from(""),
-            -1, -1, -1, -1, -1);
-        let mut west_room: Room = Room::new(
-            String::from("west room"), 
-            String::from(""),
-            -1, -1, -1, -1, -1);
-
-        self.graph.insert(1000, first_room);
-        self.graph.insert(1002, east_room);
-    }
+    pub fn get_graph(&self) -> &HashMap<i32, Room> { &self.graph }
 }
 
 /*

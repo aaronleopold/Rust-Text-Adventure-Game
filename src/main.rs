@@ -9,6 +9,9 @@ extern crate textwrap;
 
 use ncurses::*;
 use textwrap::fill;
+use std::io::{BufRead, BufReader};
+use std::fs::File;
+
 use entities::*;
 use game_window::*;
 use interactables::*;
@@ -28,6 +31,8 @@ fn main()
     let mut game: Game = Game::new();
     keypad(game.get_window().get_win(), true);
     noecho();
+
+    game.load();
     game.run();
 
     endwin();

@@ -1,3 +1,0 @@
-Unknown room:There is nothing here, just darkness. The faintest light, however, peers from the east:1000:-1:1002:-1:-1
-Dingy corridor:This corridor is really dark and gross. There's a door ahead though:1002:-1:-1:-1:1000
-Abandoned library:Huh. What a strange place for a library, cobwebs everywhere. There's someone sleeping at the front desk:1003:1004:1005:-1:1002

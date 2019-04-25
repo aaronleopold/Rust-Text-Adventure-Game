@@ -1,32 +1,26 @@
-enum EnemyType {GOBLIN, OGRE, MIMIC}
-
 pub struct Enemy
 {
-    _type: EnemyType,
     name: String,
-    level: u32,
-    max_health: i32,
-    curr_health: i32,
+    level: u8,
+    max_health: i8,
+    curr_health: i8,
     alive: bool,
 }
 
 impl Enemy
 {
-    fn new(_type: EnemyType) -> Self
+    fn new(name: String, level: u8, mhealth: i8, chealth: i8) -> Self
     {
         Enemy {
-            _type: _type,
-            // random generation of name from pool
-            // using precreated list
-            name: String::from("Goblin test"),
-            level: 1,
+            name: name,
+            level: level,
             max_health: 10,
             curr_health: 10,
             alive: true,
         }
     }
 
-    fn take_damage(&mut self, amount: i32) -> bool
+    fn take_damage(&mut self, amount: i8) -> bool
     {
         // function will return false upon death
         self.curr_health -= amount;
@@ -37,5 +31,5 @@ impl Enemy
         self.alive // return syntax?
     }
 
-    fn heal(&mut self, amount: i32) { self.curr_health += amount; }
+    fn heal(&mut self, amount: i8) { self.curr_health += amount; }
 }

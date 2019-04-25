@@ -35,7 +35,7 @@ impl Player
             curr_room: Room::new(
                 String::from("Unknown room"),
                 String::from("\nThere is nothing here, just darkness. The faintest light, however, peers from the east\n"),
-                1000, -1, 1002, -1, -1), // hard coded for now
+                1000, -1, 1002, -1, -1, Vec::new(), Vec::new(), Vec::new(), Vec::new()), // hard coded for now
             inventory: Inventory::new()
         }
     }

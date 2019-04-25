@@ -3,7 +3,9 @@ extern crate textwrap;
 
 use ncurses::*;
 use textwrap::fill;
-use std::collections::VecDeque;
+use std::fs::File;
+use std::io::{BufRead, BufReader};
+use std::env;
 
 use crate::interactables::*;
 use crate::entities::*;
@@ -33,16 +35,13 @@ impl Game
             curr_command: Vec::new()
         };
 
-        game.rooms.fill(game.player.curr_room());
+        game.rooms.insert(game.player.curr_room());
 
         game
     }
 
     pub fn run(&mut self)
     {
-        /* INITIAL SETUP */
-        // load in rooms, items and npcs
-
         let mut playing: bool = true;
         let mut x = 0;
         let mut y = 0;
@@ -57,7 +56,7 @@ impl Game
         {
             let letter = wgetch(self.main_window.get_win());
             getyx(self.main_window.get_win(), &mut y, &mut x);
-
+            
             if letter == '\n' as i32 { // user hit enter
                 wprintw(self.main_window.get_win(), "\n");
 
@@ -70,6 +69,16 @@ impl Game
                         }
                         else {
                             Some(String::from("\nWhat?\n"))
+                        }
+                    }
+
+                    "no" => {
+                        if self.player.curr_room().get_name() == String::from("Unknown room") && self.player.get_moves() == 0 {
+                            Some(Game::help_prompt())
+                        }
+
+                        else {
+                            Some(String::from("\nHow does that make sense? Why did you even try that?\n"))
                         }
                     }
 
@@ -215,6 +224,113 @@ impl Game
 
         } // while loop
     } // fn
+
+    pub fn load(&mut self) 
+    {
+        // open loading file
+        let filename = "../test_loading.txt";
+        // load in rooms, items and npc object
+        let file = File::open(filename).expect("FILE NOT FOUND!\n");
+
+        let reader = BufReader::new(file);        
+
+        for (index, line) in reader.lines().enumerate()
+        {
+            if index == 0 { continue; } // start room is hardcoded
+
+            let line = line.unwrap();
+            let mut split = line.split(":");
+            let room_info = split.collect::<Vec<&str>>();
+            let mut it = 0;
+
+            // get room name and descr
+            let room_name: String = String::from(room_info[0]);
+            let room_descr: String = String::from(room_info[1]);
+
+            // get room id, and id of rooms NESW
+            let room_id: i32 = room_info[2].parse().unwrap();
+            let room_north: i32 = room_info[3].parse().unwrap();
+            let room_east: i32 = room_info[4].parse().unwrap();
+            let room_south: i32 = room_info[5].parse().unwrap();
+            let room_west: i32 = room_info[6].parse().unwrap();
+
+            // get npc count
+            let npc_count: i16 = room_info[7].parse().unwrap();
+            it += 7; // must start using iteration placeholder
+
+            let mut room_npcs: Vec<NPC> = Vec::new();
+            if npc_count != 0 {
+                // loop for each npc
+                for i in 0..npc_count {
+                    let npc_name = String::from(room_info[it + 1]);
+                    let npc_dialogue = String::from(room_info[it + 2]);
+                    it += 2;
+
+                    room_npcs.push(
+                        NPC::new(npc_name, npc_dialogue)
+                    );
+                }
+            }
+            it += 1;        
+
+            // get item count
+            let item_count: u16 = room_info[it].parse().unwrap();
+            //it += 1;
+
+
+            // loop for each item
+            let mut room_items: Vec<Item> = Vec::new();
+            if item_count != 0 {
+                for i in 0..item_count {
+                    let item_name: String = String::from(room_info[it + 1]);
+                    let item_desc: String = String::from(room_info[it + 2]);
+
+                    it += 2;
+                }
+            }
+            it += 1;
+
+            // get weapon count
+            let weapon_count: u16 = room_info[it].parse().unwrap();
+
+            // loop for each weapon
+            let mut room_weapons: Vec<Weapon> = Vec::new();
+            if weapon_count != 0 {
+                for i in 0..weapon_count {
+                    let weapon_name: String = String::from(room_info[it + 1]);
+                    let weapon_damage: u8 = room_info[it + 2].parse().unwrap();
+
+                    it += 2;
+                }
+            }
+            it += 1;
+
+            // get enemy count
+            let enemy_count: u8 = room_info[it].parse().unwrap();
+
+            // loop for each enemy
+            let mut room_enemies: Vec<Enemy> = Vec::new();
+            if enemy_count != 0 {
+                for i in 0..enemy_count {
+                    let enemy_name: String = String::from(room_info[it + 1]);
+                    let enemy_level: u8 = room_info[it + 2].parse().unwrap();
+                    let enemy_mhealth: i8 = room_info[it + 3].parse().unwrap();
+                    let enemy_chealth: i8 = room_info[it + 4].parse().unwrap();
+
+                    it += 4;
+                }
+            }
+            it += 1;
+
+            // create room and add to self.rooms
+            let mut new_room = Room::new(
+                room_name, room_descr, room_id, room_north, room_east, room_south, room_west,
+                room_npcs, room_items, room_weapons, room_enemies
+            );
+
+            self.rooms.insert(new_room);
+        }
+    }
 
     pub fn get_window(&self) -> &MainWindow { &self.main_window }
 
