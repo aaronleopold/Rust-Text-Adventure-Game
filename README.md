@@ -7,7 +7,7 @@ Rustales requires [Rust](https://www.rust-lang.org/) to run.
 
 ```sh
 $ cd Rust-Text-Adventure-Game
-$ rust run --release
+$ cargo run --release
 ```
 
 ### References
