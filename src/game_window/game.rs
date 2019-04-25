@@ -40,6 +40,9 @@ impl Game
 
     pub fn run(&mut self)
     {
+        /* INITIAL SETUP */
+        // load in rooms, items and npcs
+
         let mut playing: bool = true;
         let mut x = 0;
         let mut y = 0;
@@ -59,6 +62,17 @@ impl Game
                 wprintw(self.main_window.get_win(), "\n");
 
                 let full_message = match input.as_ref() {
+                    "Unknown room" => {
+                        if self.player.curr_room().get_name() == String::from("Unknown room") && self.player.get_moves() == 0 {
+                            wprintw(self.main_window.get_win(),"\nWow. Yeah. Well, you got it. You win, I guess. Thanks for playing!\n(Hit any key to quit)\n");
+                            wgetch(self.main_window.get_win());
+                            break;
+                        }
+                        else {
+                            Some(String::from("\nWhat?\n"))
+                        }
+                    }
+
                     "quit" => {
                         playing = false;
                         break;
@@ -79,6 +93,7 @@ impl Game
                         let dir: Direction = Direction::NORTH;
                         let able_to_move = self.player.travel(dir, &self.rooms);
                         if able_to_move {
+                            self.player.moved();
                             Some(self.player.curr_room().get_prompt())
                         }
                         else {
@@ -116,6 +131,21 @@ impl Game
                         }
                         else {
                             Some(String::from("\nThere is nothing in that direction\n"))
+                        }
+                    }
+
+                    "flirt" => {
+                        if self.player.curr_room().get_npcs().len() == 0 {
+                            if !self.player.get_inventory().contains(String::from("mirror")) {
+                                Some(String::from("\nYou are completely alone, you don't have a mirror and I'm omniscient. Who will you flirt with?\n"))
+                            }
+                            else {
+                                Some(String::from("\nYou stare intensely into your mirror. My god, you're gorgeous.\n"))
+                            }
+                            
+                        }
+                        else {
+                            Some(String::from(""))
                         }
                     }
 
@@ -202,15 +232,19 @@ impl Game
     {
         String::from(
             "\nPossible actions:\n
-            help\n
-            up arrow -> retrieve last input\n
-            down arrow -> retrieve next input\n
-            move [cardinal direction]\n
-            speak to [name of npc]\n
-            attack [name of enemy]\n
-            use [item in inventory]\n
-            collect [item in room]\n
-            throw away [item in inventory]\n" 
+            help                        brings up this help screen\n
+            where am i                  displays current room\n
+            up arrow                    retrieve last input\n
+            down arrow                  retrieve next (from previous) input\n
+            move [cardinal direction]   moves player in direction\n
+            flee [cardinal direction]   flees from fight to direction\n
+            look                        player inspects room\n
+            speak to [name of npc]      initiates dialogue between player and npc\n
+            attack                      attacks enemy\n
+            use [item in inventory]     use item selected\n
+            collect [item in room]      collect item from room\n
+            equipt [item in inventory]  equipt item from inventory\n
+            drop [item in inventory]    remove item from inventory\n" 
         )
     }
 

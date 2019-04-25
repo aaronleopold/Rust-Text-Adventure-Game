@@ -8,6 +8,7 @@ use crate::interactables::*;
 use crate::game_window::*;
 
 pub enum Direction {NORTH, EAST, SOUTH, WEST}
+//pub enum PlayerState {EXPLORING, FIGHTING}
 
 pub struct Player
 {
@@ -16,7 +17,9 @@ pub struct Player
     max_health: i16,
     curr_health: i16,
     alive: bool,
-    curr_room: Room
+    total_moves: u64,
+    curr_room: Room,
+    inventory: Inventory
 }
 
 impl Player
@@ -24,16 +27,16 @@ impl Player
     pub fn new() -> Self 
     {
         Player {
-            //name: String::from(name),
-            // default levels?
-            level: 10,
+            level: 1,
             max_health: 10,
             curr_health: 10,
             alive: true,
+            total_moves: 0,
             curr_room: Room::new(
                 String::from("Unknown room"),
                 String::from("\nThere is nothing here, just darkness. The faintest light, however, peers from the east\n"),
-                1000, -1, 1002, -1, -1) // hard coded for now
+                1000, -1, 1002, -1, -1), // hard coded for now
+            inventory: Inventory::new()
         }
     }
 
@@ -111,10 +114,15 @@ impl Player
         }
     }
 
-    pub fn heal(&mut self, amount: i16) { self.curr_health += amount; }
+    pub fn get_inventory(&self) -> &Inventory { &self.inventory }
+    //pub fn add_to_inventory(&mut self, item: Item) { self.inventory.push(item); }
     pub fn is_alive(&self) -> bool { self.alive }
+    pub fn get_moves(&self) -> u64 { self.total_moves }
     pub fn get_chealth(&self) -> i16 { self.curr_health }
     pub fn get_mhealth(&self) -> i16 { self.max_health }
     pub fn curr_room(&self) -> Room { Room::clone(&self.curr_room) }
     pub fn get_level(&self) -> u16 { self.level }
+
+    pub fn heal(&mut self, amount: i16) { self.curr_health += amount; }
+    pub fn moved(&mut self) { self.total_moves += 1; }
 }

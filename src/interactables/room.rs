@@ -2,6 +2,8 @@ use std::collections::HashMap;
 use std::boxed::Box;
 
 use std::process;
+use crate::entities::*;
+use crate::interactables::*;
 
 pub struct Room
 {
@@ -11,7 +13,9 @@ pub struct Room
     north_room: i32,
     east_room: i32,
     south_room: i32,
-    west_room: i32
+    west_room: i32,
+    npcs: Vec<NPC>,
+    items: Vec<Item>
 }
 
 pub struct RoomGraph
@@ -35,22 +39,38 @@ impl Room
             north_room: north,
             east_room: east,
             south_room: south,
-            west_room: west
+            west_room: west,
+            npcs: Vec::new(),
+            items: Vec::new()
         }
     }
 
     #[inline]
     pub fn clone(room: &Room) -> Self 
     {
-        Room {
+        let mut new_room = Room {
             name: room.get_name(),
             room_prompt: room.get_prompt(),
             id: room.get_id(),
             north_room: room.get_north(),
             east_room: room.get_east(),
             south_room: room.get_south(),
-            west_room: room.get_west()
+            west_room: room.get_west(),
+            npcs: Vec::new(),
+            items: Vec::new()
+        };
+
+        for i in 0..(room.get_npcs().len()) {
+            let new_npc: NPC = NPC::clone(&room.get_npcs()[i]);
+            new_room.npcs.push(new_npc);
         }
+
+        for i in 0..(room.get_items().len()) {
+            let new_item: Item = Item::clone(&room.get_items()[i]);
+            new_room.items.push(new_item);
+        }
+
+        new_room
     }
 
     pub fn get_name(&self) -> String { self.name.clone() }
@@ -60,6 +80,8 @@ impl Room
     pub fn get_east(&self) -> i32 { self.east_room }
     pub fn get_south(&self) -> i32 { self.south_room }
     pub fn get_west(&self) -> i32 { self.west_room }
+    pub fn get_npcs(&self) -> &Vec<NPC> { &self.npcs }
+    pub fn get_items(&self) -> &Vec<Item> { &self.items }
 }
 
 impl RoomGraph
