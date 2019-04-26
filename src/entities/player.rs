@@ -33,7 +33,7 @@ impl Player
             alive: true,
             total_moves: 0,
             curr_room: Room::new(
-                String::from("Unknown room"),
+                String::from("unknown room"),
                 String::from("\nThere is nothing here, just darkness. The faintest light, however, peers from the east\n"),
                 1000, -1, 1002, -1, -1, Vec::new(), Vec::new(), Vec::new(), Vec::new()), // hard coded for now
             inventory: Inventory::new()
@@ -111,6 +111,17 @@ impl Player
         }
         else {
             false
+        }
+    }
+
+    pub fn add_to_inventory(&mut self, item: String) 
+    {
+        if self.curr_room().has_item(item.clone()) {
+            self.inventory.add_item(self.curr_room().get_item(item.clone()));
+        }
+
+        else if self.curr_room().has_weapon(item.clone()) {
+            self.inventory.add_weapon(self.curr_room().get_weapon(item.clone()));
         }
     }
 

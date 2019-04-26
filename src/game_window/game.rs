@@ -49,7 +49,7 @@ impl Game
         
         self.update_header();
         //self.player.look_at_room(&mut(self.main_window));
-        wprintw(self.main_window.get_win(), "\nFinally, you're awake. Do you know where you are?\n");
+        wprintw(self.main_window.get_win(), "\nFinally, you're awake. Do you know where you are?\n\n");
         self.main_window.prompt();
 
         while playing
@@ -60,25 +60,79 @@ impl Game
             if letter == '\n' as i32 { // user hit enter
                 wprintw(self.main_window.get_win(), "\n");
 
-                let full_message = match input.as_ref() {
-                    "Unknown room" => {
+                if input.to_lowercase().contains("speak to ") {
+                    let name: String = String::from(&input[9..]);
+                    //wprintw(self.main_window.get_win(), name.as_ref());
+                    let mut message = String::new();
+
+                    // check the name exists in room
+                    if self.player.curr_room().has_npc(name.clone()) {
+                        let dialogue: String = self.player.curr_room().get_npc_dialogue(name.clone());
+
+                        if dialogue == "" { message = String::from("\nthere is nobody in the room who goes by that\n"); }
+                        else {
+                            message = String::from("\n\n") + self.player.curr_room().get_npc_dialogue(name.clone()).as_str() + "\n\n";
+                        }
+                    }
+
+                    else {
+                        message = String::from("\n\nthere is nobody in the room who goes by that\n\n");
+                    }
+
+                    wprintw(self.main_window.get_win(), message.as_ref());
+                    self.main_window.prompt();
+                    self.prev_command.push(input.clone());
+                    input.clear();
+                    continue;
+
+                }
+
+                if input.to_lowercase().contains("collect ") {
+                    let item: String = String::from(&input[8..]);
+                    let mut message = String::new();
+
+                    // check that the item exists in the room
+                    if self.player.curr_room().has_item(item.clone()) || self.player.curr_room().has_weapon(item.clone()) {
+                        let can_collect: bool = !self.player.get_inventory().is_full();
+
+                        if can_collect {
+                            self.player.add_to_inventory(item.clone());
+                            message = String::from(format!("\n\n{} added to inventory\n\n", item.clone()));
+                        }
+                        else {
+                            message = String::from("\n\ninventory is full\n\n");
+                        }
+                    }
+                    else {
+                        message = String::from(format!("\n\nthere is no item {} in the room\n\n", item.as_str()));
+                    }
+
+                    wprintw(self.main_window.get_win(), message.as_ref());
+                    self.main_window.prompt();
+                    self.prev_command.push(input.clone());
+                    input.clear();
+                    continue;
+                }
+
+                let full_message = match input.to_lowercase().as_ref() {
+                    "unknown room" => {
                         if self.player.curr_room().get_name() == String::from("Unknown room") && self.player.get_moves() == 0 {
-                            wprintw(self.main_window.get_win(),"\nWow. Yeah. Well, you got it. You win, I guess. Thanks for playing!\n(Hit any key to quit)\n");
+                            wprintw(self.main_window.get_win(),"\nwow. yeah. well, you got it. you win, i guess. thanks for playing!\n(hit any key to quit)\n");
                             wgetch(self.main_window.get_win());
                             break;
                         }
                         else {
-                            Some(String::from("\nWhat?\n"))
+                            Some(String::from("\nwhat?\n"))
                         }
                     }
 
                     "no" => {
-                        if self.player.curr_room().get_name() == String::from("Unknown room") && self.player.get_moves() == 0 {
+                        if self.player.curr_room().get_name() == String::from("unknown room") && self.player.get_moves() == 0 {
                             Some(Game::help_prompt())
                         }
 
                         else {
-                            Some(String::from("\nHow does that make sense? Why did you even try that?\n"))
+                            Some(String::from("\nhow does that make sense? why did you even try that?\n"))
                         }
                     }
 
@@ -94,7 +148,7 @@ impl Game
 
                     "where am i" => {
                         Some(String::from(format!(
-                            "\nCurrent Location: {}\n", self.player.curr_room().get_name()
+                            "\ncurrent Location: {}\n", self.player.curr_room().get_name()
                         )))
                     }
 
@@ -106,7 +160,7 @@ impl Game
                             Some(self.player.curr_room().get_prompt())
                         }
                         else {
-                            Some(String::from("\nThere is nothing in that direction\n"))
+                            Some(String::from("\nthere is nothing in that direction\n"))
                         }
                     }
 
@@ -117,7 +171,7 @@ impl Game
                             Some(self.player.curr_room().get_prompt())
                         }
                         else {
-                            Some(String::from("\nThere is nothing in that direction\n"))
+                            Some(String::from("\nthere is nothing in that direction\n"))
                         }
                     }
 
@@ -128,7 +182,7 @@ impl Game
                             Some(self.player.curr_room().get_prompt())
                         }
                         else {
-                            Some(String::from("\nThere is nothing in that direction\n"))
+                            Some(String::from("\nthere is nothing in that direction\n"))
                         }
                     }
 
@@ -139,7 +193,78 @@ impl Game
                             Some(self.player.curr_room().get_prompt())
                         }
                         else {
-                            Some(String::from("\nThere is nothing in that direction\n"))
+                            Some(String::from("\nthere is nothing in that direction\n"))
+                        }
+                    }
+
+                    "ask name" => {
+                        if self.player.curr_room().get_npcs().len() == 1 {
+                            if self.player.curr_room().get_npcs()[0].is_nice() {
+                                let response: String = 
+                                String::from("\n") +
+                                self.player.curr_room().get_npcs()[0].get_name_response().as_str() +
+                                "\n";
+                                
+                                Some(response)
+                            }
+                            else {
+                                let response: String = 
+                                String::from("\nthe ") +
+                                self.player.curr_room().get_npcs()[0].get_description().as_str() +
+                                " doesn't seem to want to share\n";
+                                
+                                Some(response)
+                            }
+                            
+                        }
+                        else if self.player.curr_room().get_npcs().len() == 0 {
+                            Some(String::from("\nThere is nobody else here. You're completely alone\n"))
+                        }
+                        else {
+                            Some(String::from("\nI can't handle that yet. Try again soon\n"))
+                        }
+                    }
+
+                    "show inventory" => {
+                        if self.player.get_inventory().get_len() == 0 {
+                            let inventory = String::from("\ninventory is empty, there is nothing to show\n");
+                            Some(inventory)
+                        }
+                        else {
+                            let mut inventory = String::from("\n\n");
+
+                            for i in 0..self.player.get_inventory().get_items().len() {
+                                inventory += self.player.get_inventory().get_items()[i].get_name().as_str();
+                                inventory += "\n";
+                            }
+
+                            inventory += "\n";
+
+                            Some(inventory)
+
+                        }
+                    }
+
+                    "room items" => {
+                        if self.player.curr_room().get_items().len() == 0 && self.player.curr_room().get_weapons().len() == 0 {
+                            Some(String::from("\nthis room has no items\n"))
+                        }
+                        else {
+                            let mut message = String::from("\n");
+
+                            for i in 0..self.player.curr_room().get_items().len() {
+                                message += self.player.curr_room().get_items()[i].get_name().as_str();
+                                message += "\n";
+                            }
+
+                            for i in 0..self.player.curr_room().get_weapons().len() {
+                                message += self.player.curr_room().get_weapons()[i].get_name().as_str();
+                                message += "\n";
+                            }
+
+                            message += "\n";
+
+                            Some(message)
                         }
                     }
 
@@ -263,11 +388,14 @@ impl Game
                 // loop for each npc
                 for i in 0..npc_count {
                     let npc_name = String::from(room_info[it + 1]);
-                    let npc_dialogue = String::from(room_info[it + 2]);
-                    it += 2;
+                    let npc_nice: bool = room_info[it + 2].parse().unwrap();
+                    let npc_name_response: String = String::from(room_info[it + 3]);
+                    let npc_dialogue = String::from(room_info[it + 4]);
+                    let npc_description: String = String::from(room_info[it + 5]);
+                    it += 5;
 
                     room_npcs.push(
-                        NPC::new(npc_name, npc_dialogue)
+                        NPC::new(npc_name, npc_dialogue, npc_nice, npc_name_response, npc_description)
                     );
                 }
             }
@@ -286,6 +414,8 @@ impl Game
                     let item_desc: String = String::from(room_info[it + 2]);
 
                     it += 2;
+
+                    room_items.push(Item::new(item_name, item_desc, false));
                 }
             }
             it += 1;
@@ -347,7 +477,7 @@ impl Game
     pub fn help_prompt() -> String
     {
         String::from(
-            "\nPossible actions:\n
+            "\na few possible actions:\n
             help                        brings up this help screen\n
             where am i                  displays current room\n
             up arrow                    retrieve last input\n
@@ -355,8 +485,11 @@ impl Game
             move [cardinal direction]   moves player in direction\n
             flee [cardinal direction]   flees from fight to direction\n
             look                        player inspects room\n
+            room items                  displays collectable items in room\n
+            ask name                    npc may reveal name to you\n
             speak to [name of npc]      initiates dialogue between player and npc\n
             attack                      attacks enemy\n
+            show inventory              displays contents of inventory\n
             use [item in inventory]     use item selected\n
             collect [item in room]      collect item from room\n
             equipt [item in inventory]  equipt item from inventory\n

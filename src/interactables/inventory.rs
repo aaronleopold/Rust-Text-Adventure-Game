@@ -47,4 +47,39 @@ impl Inventory
 
         ret
     }
+
+    pub fn add_item(&mut self, item: Item) -> bool 
+    {
+        let mut ret: bool = false;
+
+        if self.get_len() < self.max_items as usize {
+            // add it
+            self.items.push(item);
+            self.curr_items += 1;
+
+            ret = true;
+        }
+
+        ret
+    }
+
+    pub fn add_weapon(&mut self, weapon: Weapon) -> bool 
+    {
+        let mut ret: bool = false;
+
+        if self.get_len() < self.max_items as usize {
+            // add it
+            self.weapons.push(weapon);
+            self.curr_items += 1;
+
+            ret = true;
+        }
+
+        ret
+    }
+
+    pub fn get_len(&self) -> usize { self.weapons.len() + self.items.len() }
+    pub fn get_items(&self) -> &Vec<Item> { &self.items }
+    pub fn get_weapons(&self) -> &Vec<Weapon> { &self.weapons }
+    pub fn is_full(&self) -> bool { self.curr_items == self.max_items }
 }

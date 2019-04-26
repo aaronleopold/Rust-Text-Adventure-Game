@@ -110,6 +110,107 @@ impl Room
     pub fn get_items(&self) -> &Vec<Item> { &self.items }
     pub fn get_weapons(&self) -> &Vec<Weapon> { &self.weapons }
     pub fn get_enemies(&self) -> &Vec<Enemy> { &self.enemies }
+
+    pub fn get_item(&mut self, name: String) -> Item
+    {
+        let mut index = 0;
+
+        for i in 0..self.items.len()
+        {
+            if self.items[i].get_name() == name {
+                index = i;// does this borrow automatically remove from vec? 
+            }
+        }
+
+        let mut ret = Item::clone(&self.items[index]);
+        self.items.remove(index);
+        ret
+    }
+
+    pub fn get_weapon(&mut self, name: String) -> Weapon
+    {
+        let mut index = 0;
+
+        for i in 0..self.weapons.len() {
+            if self.weapons[i].get_name() == name {
+                index = i;
+            }
+        }
+
+        let mut ret = Weapon::clone(&self.weapons[index]);
+        self.weapons.remove(index);
+        ret
+    }
+
+    pub fn has_item(&self, name: String) -> bool 
+    {
+        let mut ret: bool = false;
+
+        for i in 0..self.items.len()
+        {
+            if self.items[i].get_name() == name {
+                ret = true;
+            }
+        }
+
+        ret
+    }
+
+    pub fn has_weapon(&self, name: String) -> bool
+    {
+        let mut ret: bool = false;
+
+        for i in 0..self.weapons.len()
+        {
+            if self.weapons[i].get_name() == name {
+                ret = true;
+            }
+        }
+
+        ret
+    }
+
+    pub fn has_npc(&self, name: String) -> bool
+    {
+        let mut ret: bool = false;
+
+        for i in 0..self.npcs.len() 
+        {
+            if self.npcs[i].get_name() == name {
+                ret = true;
+            }
+        }
+
+        ret
+    }
+
+    pub fn npc_is_nice(&self, name: String) -> bool
+    {
+        let mut ret: bool = false;
+
+        for i in 0..self.npcs.len()
+        {
+            if self.npcs[i].get_name() == name && self.npcs[i].is_nice() {
+                ret = true;
+            }
+        }
+
+        ret
+    }
+
+    pub fn get_npc_dialogue(&self, name: String) -> String
+    {
+        let mut ret: String = String::new();
+
+        for i in 0..self.npcs.len()
+        {
+            if self.npcs[i].get_name() == name {
+                ret = self.npcs[i].get_dialogue();
+            }
+        }
+
+        ret
+    }
 }
 
 impl RoomGraph

@@ -1,3 +1,5 @@
-Unknown room:There is nothing here, just darkness. The faintest light, however, peers from the east:1000:-1:1002:-1:-1:0:0:0:0
-Dingy corridor:This corridor is really dark and gross. There's a door ahead though:1002:-1:1003:-1:1000:0:0:0:0
-Abandoned library:Huh. What a strange place for a library, cobwebs everywhere. There's someone sleeping at the front desk:1003:1004:1005:-1:1002:1:Harold:Harold will eventually say something of value to the story here. But for now, he remains sleeping:0:0:0
+unknown room:there is nothing here, just darkness. The faintest light, however, peers from the east:1000:-1:1002:-1:-1:0:0:0:0
+dingy corridor:this corridor is really dark and gross. There's a door ahead though:1002:-1:1003:-1:1000:0:0:0:0
+abandoned library:huh. what a strange place for a library, cobwebs everywhere. there's someone sleeping at the front desk:1003:1004:1005:-1:1002:1:harold:true:*interrupted snores* huh? OH! hello! sorry, i must have dozed off there! i'm harold:youre kind, nobody speaks to me anymore (usually they just walk right past me). although, i suppose i am sleeping most of the time! ah well. if youre interesting in staying, theres a much larger selection of books upstairs!:tired book-keeper:0:0:0
+second floor - abandoned library:it is much larger up here, but everything is a mess. almost as if someone was looking for something and left in a hurry:1004:-1:-1:1003:-1:0:1:history book:rust - a history of our great country:0:0
+ascending stairwell:you look up and see what appears to be an endless stairwell. did you realize you were so far underground?:1005:1006:-1:-1:1003:0:0:0:0
