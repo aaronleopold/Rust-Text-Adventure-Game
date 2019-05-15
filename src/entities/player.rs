@@ -19,7 +19,8 @@ pub struct Player
     alive: bool,
     total_moves: u64,
     curr_room: Room,
-    inventory: Inventory
+    inventory: Inventory,
+    is_fighting: bool
 }
 
 impl Player
@@ -36,7 +37,8 @@ impl Player
                 String::from("unknown room"),
                 String::from("\nThere is nothing here, just darkness. The faintest light, however, peers from the east\n"),
                 1000, -1, 1002, -1, -1, Vec::new(), Vec::new(), Vec::new(), Vec::new()), // hard coded for now
-            inventory: Inventory::new()
+            inventory: Inventory::new(),
+            is_fighting: false
         }
     }
 
@@ -48,7 +50,7 @@ impl Player
             self.alive = false;
         }
 
-        self.alive // return syntax?
+        self.alive
     }
 
     pub fn look_at_room(&mut self, win: &mut MainWindow)
@@ -126,14 +128,19 @@ impl Player
     }
 
     pub fn get_inventory(&self) -> &Inventory { &self.inventory }
-    //pub fn add_to_inventory(&mut self, item: Item) { self.inventory.push(item); }
+
     pub fn is_alive(&self) -> bool { self.alive }
+    pub fn is_fighting(&self) -> bool { self.is_fighting }
+    pub fn set_fighting(&mut self, fighting: bool) { self.is_fighting = fighting }
+
     pub fn get_moves(&self) -> u64 { self.total_moves }
+
     pub fn get_chealth(&self) -> i16 { self.curr_health }
     pub fn get_mhealth(&self) -> i16 { self.max_health }
+    pub fn heal(&mut self, amount: i16) { self.curr_health += amount; }
+
     pub fn curr_room(&self) -> Room { Room::clone(&self.curr_room) }
     pub fn get_level(&self) -> u16 { self.level }
 
-    pub fn heal(&mut self, amount: i16) { self.curr_health += amount; }
     pub fn moved(&mut self) { self.total_moves += 1; }
 }
