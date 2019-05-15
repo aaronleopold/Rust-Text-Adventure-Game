@@ -1,5 +1,6 @@
 # Rustales
-A text-based adventure game developed in Rust
+A text-based adventure game developed in Rust using the ncurses wrapper library. Unfortunately, the ncurses library is currently only compatible with unix-based systems. See their [github page](https://github.com/jeaye/ncurses-rs) for more information on installation, setup or compatibility. 
+
 
 ### Installation
 
